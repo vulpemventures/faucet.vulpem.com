@@ -2,7 +2,7 @@
 
 ## 📄 Usage
 
-Visit the [dex.vulpem.com](https://dex.vulpem.com)
+Visit the [faucet.vulpem.com](https://faucet.vulpem.com)
 
 ## 🖥 Local Development
 
