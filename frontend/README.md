@@ -1,29 +1,21 @@
-# svelte-webpack-bulma
+# faucet
 
-Template for Svelte with TypeScript, Webpack and Bulma CSS library. 
+## 📄 Usage
 
+Visit the [dex.vulpem.com](https://dex.vulpem.com)
 
-## What's inside?
+## 🖥 Local Development
 
-- TypeScript
-- Webpack (with Node.js polyfill plugin)
-- Bulma
-- Prettier
-- ESLint
+Below is a list of commands you will probably find useful.
 
+### `yarn dev`
 
-### Using `degit`
+Runs the project in development/watch mode. Your project will be rebuilt upon changes. Error messages are pretty printed and formatted for compatibility VS Code's Problems tab. Your library will be rebuilt if you make edits.
 
-To create a new project locally, run
+### `yarn build`
 
-```bash
-npx degit "tiero/svelte-webpack-bulma" my-app
-```
+Bundles the bundle to the `dist` folder.
 
-[`degit`](https://github.com/Rich-Harris/degit) is a scaffolding tool that lets you create a directory from a branch in a repository.
+### `yarn format`
 
-Replace `my-app` with the path where you wish to create the project.
-
-### Using GitHub templates
-
-Alternatively, you can create the new project as a GitHub repository using GitHub's template feature.
+Runs the prettier format tool
