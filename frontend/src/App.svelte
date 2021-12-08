@@ -1,14 +1,37 @@
-<script>
+<script lang="typescript">
+  import { onMount } from 'svelte';
   import Connect from 'svelte-marina-button';
+  import {
+    AddressInterface,
+    detectProvider,
+    MarinaProvider,
+  } from 'marina-provider';
+
+  let marina: MarinaProvider | undefined;
+  let address: AddressInterface | undefined;
+
+  onMount(async () => {
+    const promise = detectProvider('marina');
+    marina = await promise;
+    address = await marina.getNextAddress();
+    console.log(address);
+  });
 </script>
 
 <section class="hero has-background-black-bis is-fullheight">
-  <!-- Hero head: will stick at the top -->
-  <div class="hero-head">
-    <div class="container is-max-desktop has-text-right mt-3 mr-3">
-      <Connect />
+  {#if marina}
+    <div class="hero-head">
+      <div class="container is-max-desktop has-text-right mt-3 mr-3">
+        <Connect />
+      </div>
     </div>
-  </div>
+  {:else}
+    <!-- <p>Detecting provider...</p> -->
+    <p style="color: red">Please install the Marina browser extension</p>
+     -->
+  {/if}
+
+  <!-- Hero head: will stick at the top -->
 
   <div class="hero-body">
     <div class="container is-max-desktop">
