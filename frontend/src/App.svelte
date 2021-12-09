@@ -7,33 +7,18 @@
     MarinaProvider,
   } from 'marina-provider';
   import assets from './assets';
-
-  type SubmitResult = { txid: string };
+  import {requestAsset} from './api';
+  import type {FaucetResponse} from './api';
 
   let marina: MarinaProvider | undefined;
   let address: AddressInterface | undefined;
 
   let selected: string;
 
-  let submitResult: Promise<SubmitResult> | undefined;
-  async function submit(args: {
-    to: string;
-    asset: string;
-  }): Promise<SubmitResult> {
-    const res = await fetch('/api', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(args),
-    });
-    const result = await res.json();
-    return result;
-  }
+  let submitResult: Promise<FaucetResponse> | undefined;
 
   function handleClick() {
-    submitResult = submit({ to: address.confidentialAddress, asset: selected });
+    submitResult = requestAsset({ to: address.confidentialAddress, asset: selected });
   }
 
   onMount(async () => {
