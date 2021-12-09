@@ -6,6 +6,7 @@
     detectProvider,
     MarinaProvider,
   } from 'marina-provider';
+  import Field from './Field.svelte';
   import assets from './assets';
   import { requestAsset } from './api';
   import type { FaucetResponse } from './api';
@@ -46,39 +47,25 @@
   {#if marina}
     <div class="hero-body">
       <div class="container is-max-desktop has-text-centered">
-        <div class="field is-horizontal mb-3">
-          <div class="field-label is-normal">
-            <label for="asset" class="label has-text-white">Asset</label>
+        <Field labelFor="asset" label="Asset">
+          <div class="select is-primary">
+            <select id="asset" bind:value={asset}>
+              {#each assets as { name, id }}
+                <option value={id}>{name}</option>
+              {/each}
+            </select>
           </div>
-          <div class="field-body">
-            <div class="control">
-              <div class="select is-primary">
-                <select id="asset" bind:value={asset}>
-                  {#each assets as { name, id }}
-                    <option value={id}>{name}</option>
-                  {/each}
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
+        </Field>
 
-        <div class="field is-horizontal mb-4">
-          <div class="field-label is-normal">
-            <label for="address" class="label has-text-white">Address</label>
-          </div>
-          <div class="field-body">
-            <div class="control">
-              <input
-                id="address"
-                type="text"
-                bind:value={address}
-                placeholder="Liquid testnet address"
-                class="input is-primary"
-              />
-            </div>
-          </div>
-        </div>
+        <Field labelFor="address" label="Address">
+          <input
+            id="address"
+            type="text"
+            bind:value={address}
+            placeholder="Liquid testnet address"
+            class="input is-primary"
+          />
+        </Field>
 
         <button
           on:click={handleClick}
