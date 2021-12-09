@@ -1,11 +1,7 @@
 <script lang="typescript">
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
   import Connect from 'svelte-marina-button';
-  import {
-    AddressInterface,
-    detectProvider,
-    MarinaProvider,
-  } from 'marina-provider';
+  import { detectProvider, MarinaProvider } from 'marina-provider';
   import Field from './Field.svelte';
   import assets from './assets';
   import { requestAsset } from './api';
@@ -15,7 +11,6 @@
   let marina: MarinaProvider;
   let address: string;
   let network: string;
-
   let asset: string;
 
   let faucetLoading = false;
@@ -34,6 +29,13 @@
     marina = await detectProvider('marina');
     address = (await marina.getNextAddress()).confidentialAddress;
     network = await marina.getNetwork();
+    marina.on('NETWORK', (payload: string) => {
+      network = payload;
+    });
+  });
+
+  onDestroy(() => {
+    marina.off('NETWORK');
   });
 </script>
 
@@ -47,54 +49,60 @@
   {#if marina}
     <div class="hero-body">
       <div class="container is-max-desktop has-text-centered">
-        <Field labelFor="asset" label="Asset">
-          <div class="select is-primary">
-            <select id="asset" bind:value={asset}>
-              {#each assets as { name, id }}
-                <option value={id}>{name}</option>
-              {/each}
-            </select>
-          </div>
-        </Field>
-
-        <Field labelFor="address" label="Address">
-          <input
-            id="address"
-            type="text"
-            bind:value={address}
-            placeholder="Liquid testnet address"
-            class="input is-primary"
-          />
-        </Field>
-
-        <button
-          on:click={handleClick}
-          class="button is-primary"
-          class:is-loading={faucetLoading}
-        >
-          Request
-        </button>
-
-        {#if faucetPromise}
-          {#await faucetPromise then { txid }}
-            <div class="mt-2">
-              <p class="has-text-white">
-                Transaction ID:
-                <a
-                  href="https://blockstream.info/liquidtestnet/tx/{txid}"
-                  target="_blank"
-                  rel="noreferrer"
-                  class="is-family-code"
-                >
-                  {txid}
-                </a>
-              </p>
+        {#if network === 'testnet'}
+          <Field labelFor="asset" label="Asset">
+            <div class="select is-primary">
+              <select id="asset" bind:value={asset}>
+                {#each assets as { name, id }}
+                  <option value={id}>{name}</option>
+                {/each}
+              </select>
             </div>
-          {:catch error}
-            <p class="has-text-danger mt-2">
-              {error?.message ?? 'Unknown Error'}
-            </p>
-          {/await}
+          </Field>
+
+          <Field labelFor="address" label="Address">
+            <input
+              id="address"
+              type="text"
+              bind:value={address}
+              placeholder="Liquid testnet address"
+              class="input is-primary"
+            />
+          </Field>
+
+          <button
+            on:click={handleClick}
+            class="button is-primary"
+            class:is-loading={faucetLoading}
+          >
+            Request
+          </button>
+
+          {#if faucetPromise}
+            {#await faucetPromise then { txid }}
+              <div class="mt-2">
+                <p class="has-text-white">
+                  Transaction ID:
+                  <a
+                    href="https://blockstream.info/liquidtestnet/tx/{txid}"
+                    target="_blank"
+                    rel="noreferrer"
+                    class="is-family-code"
+                  >
+                    {txid}
+                  </a>
+                </p>
+              </div>
+            {:catch error}
+              <p class="has-text-danger mt-2">
+                {error?.message ?? 'Unknown Error'}
+              </p>
+            {/await}
+          {/if}
+        {:else}
+          <p class="has-text-white">
+            Wrong network, switch to the Testnet network.
+          </p>
         {/if}
       </div>
     </div>
