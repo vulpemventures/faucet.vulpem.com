@@ -1,4 +1,4 @@
-export async function loader<T>(
+export default async function loader<T>(
   promise: Promise<T>,
   updater: (loading: boolean) => void
 ): Promise<T> {

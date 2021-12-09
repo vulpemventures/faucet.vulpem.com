@@ -2,11 +2,11 @@
   import { onMount, onDestroy } from 'svelte';
   import Connect from 'svelte-marina-button';
   import { detectProvider, MarinaProvider } from 'marina-provider';
-  import Field from './Field.svelte';
-  import assets from './assets';
-  import { requestAsset } from './api';
-  import type { FaucetResponse } from './api';
-  import { loader } from './util';
+  import Field from './components/Field.svelte';
+  import assets from './util/assets';
+  import { requestAsset } from './util/api';
+  import type { FaucetResponse } from './util/api';
+  import loader from './util/loader';
 
   let marina: MarinaProvider;
   let address: string;
