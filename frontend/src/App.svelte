@@ -6,6 +6,7 @@
     detectProvider,
     MarinaProvider,
   } from 'marina-provider';
+  import assets from './assets';
 
   let marina: MarinaProvider | undefined;
   let address: AddressInterface | undefined;
@@ -25,21 +26,22 @@
         <Connect />
       </div>
     </div>
+
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="select is-primary">
+          <select>
+            {#each assets as { name, id }}
+              <option value={id}>{name}</option>
+            {/each}
+          </select>
+        </div>
+      </div>
+    </div>
   {:else}
     <!-- <p>Detecting provider...</p> -->
     <p style="color: red">Please install the Marina browser extension</p>
-     -->
   {/if}
-
-  <!-- Hero head: will stick at the top -->
-
-  <div class="hero-body">
-    <div class="container is-max-desktop">
-      <div class="columns">
-        <div class="column is-half is-offset-one-quarter" />
-      </div>
-    </div>
-  </div>
 
   <div class="hero-foot">
     <div class="container is-max-desktop">
