@@ -13,27 +13,27 @@
   let marina: MarinaProvider | undefined;
   let address: AddressInterface | undefined;
 
+  let selected: string;
+
   let submitResult: Promise<SubmitResult> | undefined;
-  async function submit(): Promise<SubmitResult> {
+  async function submit(args: {
+    to: string;
+    asset: string;
+  }): Promise<SubmitResult> {
     const res = await fetch('/api', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        to: 'vjTvv2jgmHq4AX8Hrqqzhr4uoNQm957YC14fjKY77yacxAvK6PfrNNibz4h34GuXCTaRbMni3fx9HrnS',
-        asset:
-          '144c654344aa716d6f3abcc1ca90e5641e4e2a7f633bc09fe3baf64585819a49',
-      }),
+      body: JSON.stringify(args),
     });
     const result = await res.json();
-    console.log(result);
     return result;
   }
 
   function handleClick() {
-    submitResult = submit();
+    submitResult = submit({ to: address.confidentialAddress, asset: selected });
   }
 
   onMount(async () => {
@@ -54,7 +54,7 @@
     <div class="hero-body">
       <div class="container is-max-desktop">
         <div class="select is-primary">
-          <select>
+          <select bind:value={selected}>
             {#each assets as { name, id }}
               <option value={id}>{name}</option>
             {/each}
