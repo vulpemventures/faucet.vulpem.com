@@ -7,18 +7,25 @@
     MarinaProvider,
   } from 'marina-provider';
   import assets from './assets';
-  import {requestAsset} from './api';
-  import type {FaucetResponse} from './api';
+  import { requestAsset } from './api';
+  import type { FaucetResponse } from './api';
+  import { promiser } from './util';
 
   let marina: MarinaProvider | undefined;
   let address: AddressInterface | undefined;
 
   let selected: string;
 
-  let submitResult: Promise<FaucetResponse> | undefined;
+  let faucetLoading = false;
+  let faucetPromise: Promise<FaucetResponse> | undefined;
 
   function handleClick() {
-    submitResult = requestAsset({ to: address.confidentialAddress, asset: selected });
+    faucetPromise = promiser(
+      requestAsset({ to: address.confidentialAddress, asset: selected }),
+      (loading) => {
+        faucetLoading = loading;
+      }
+    );
   }
 
   onMount(async () => {
@@ -44,15 +51,19 @@
               <option value={id}>{name}</option>
             {/each}
           </select>
-          <button class="button is-primary" on:click={handleClick}>
-            Submit
+          <button
+            class="button is-primary"
+            class:is-loading={faucetLoading}
+            on:click={handleClick}
+          >
+            Request
           </button>
         </div>
       </div>
     </div>
 
-    {#if submitResult}
-      {#await submitResult}
+    {#if faucetPromise}
+      {#await faucetPromise}
         <p>Submitting...</p>
       {:then { txid }}
         <p>{txid}</p>
