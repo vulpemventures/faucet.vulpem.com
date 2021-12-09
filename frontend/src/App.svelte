@@ -19,7 +19,7 @@
   let asset: string;
 
   let faucetLoading = false;
-  let faucetPromise: Promise<FaucetResponse> | undefined;
+  let faucetPromise: Promise<FaucetResponse>;
 
   function handleClick() {
     faucetPromise = promiser(
@@ -74,18 +74,30 @@
         >
           Request
         </button>
+
+        {#if faucetPromise}
+          {#await faucetPromise then { txid }}
+            <div class="mt-2">
+              <p class="has-text-white">
+                Transaction ID:
+                <a
+                  href="https://blockstream.info/liquidtestnet/tx/{txid}"
+                  target="_blank"
+                  rel="noreferrer"
+                  class="is-family-code"
+                >
+                  {txid}
+                </a>
+              </p>
+            </div>
+          {:catch error}
+            <p class="has-text-danger mt-2">
+              {error?.message ?? 'Unknown Error'}
+            </p>
+          {/await}
+        {/if}
       </div>
     </div>
-  {/if}
-
-  {#if faucetPromise}
-    {#await faucetPromise}
-      <p>Submitting...</p>
-    {:then { txid }}
-      <p>{txid}</p>
-    {:catch error}
-      <p style="color: red">{error.message}</p>
-    {/await}
   {/if}
 
   <div class="hero-foot">
