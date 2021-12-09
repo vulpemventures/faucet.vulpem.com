@@ -15,5 +15,8 @@ export async function requestAsset(req: FaucetRequest): Promise<FaucetResponse> 
 			body: JSON.stringify(req),
 	});
 	const result = await res.json();
+	if (!res.ok) {
+		throw new Error(result.message)
+	}
 	return result;
 }

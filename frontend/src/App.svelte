@@ -6,7 +6,7 @@
   import assets from './assets';
   import { requestAsset } from './api';
   import type { FaucetResponse } from './api';
-  import { promiser } from './util';
+  import { loader } from './util';
 
   let marina: MarinaProvider;
   let address: string;
@@ -17,12 +17,9 @@
   let faucetPromise: Promise<FaucetResponse>;
 
   function handleClick() {
-    faucetPromise = promiser(
-      requestAsset({ to: address, asset }),
-      (loading) => {
-        faucetLoading = loading;
-      }
-    );
+    faucetPromise = loader(requestAsset({ to: address, asset }), (loading) => {
+      faucetLoading = loading;
+    });
   }
 
   onMount(async () => {

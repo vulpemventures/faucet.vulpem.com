@@ -1,11 +1,11 @@
-export async function promiser<T>(promise: Promise<T>, subscriber: (loading: boolean) => void): Promise<T> {
-	subscriber(true)
+export async function loader<T>(promise: Promise<T>, updater: (loading: boolean) => void): Promise<T> {
+	updater(true)
 	try {
 		return await promise
 	} catch (err) {
 		throw err
 	}
 	finally {
-		subscriber(false)
+		updater(false)
 	}
 }
