@@ -69,8 +69,9 @@
 
           <button
             on:click={handleClick}
-            class="button is-primary"
             class:is-loading={faucetLoading}
+            disabled={address === ''}
+            class="button is-primary"
           >
             Request
           </button>
