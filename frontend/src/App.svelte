@@ -1,17 +1,27 @@
 <script lang="typescript">
-  import { onMount, onDestroy } from 'svelte';
-  import Connect from 'svelte-marina-button';
-  import { detectProvider, MarinaProvider } from 'marina-provider';
+  import { onDestroy, onMount } from 'svelte';
+  import Connect, { marinaStore, MarinaStore } from 'svelte-marina-button';
+  import { MarinaProvider } from 'marina-provider';
   import Field from './components/Field.svelte';
   import assets from './util/assets';
   import { requestAsset } from './util/api';
   import type { FaucetResponse } from './util/api';
   import loader from './util/loader';
 
-  let marina: MarinaProvider;
+  enum ButtonMessage {
+    INSTALL = "Marina is not installed",
+    ENABLE = "Connect with Marina",
+    WRONG_NETWORK = "Wrong network, switch to the Testnet",
+    REQUEST = "Request",
+  }
+
+ 
   let address: string;
-  let network: string;
   let asset: string;
+
+  $: installed = false;
+  $: enabled = false;
+  $: network = undefined;
 
   let faucetLoading = false;
   let faucetPromise: Promise<FaucetResponse>;
@@ -22,17 +32,26 @@
     });
   }
 
-  onMount(async () => {
-    marina = await detectProvider('marina');
-    address = (await marina.getNextAddress()).confidentialAddress;
-    network = await marina.getNetwork();
-    marina.on('NETWORK', (payload: string) => {
-      network = payload;
-    });
+  const unsubscribe = marinaStore.subscribe((s: MarinaStore) => {
+    installed = s.installed;
+    enabled = s.enabled;
+    network = s.network;
+    console.log(s);
   });
 
+  $: buttonMessage = 
+    !installed ? 
+    ButtonMessage.INSTALL : 
+    (!enabled ? 
+      ButtonMessage.ENABLE : 
+      (network !== 'testnet' ? 
+        ButtonMessage.WRONG_NETWORK : 
+        ButtonMessage.REQUEST
+      )
+    ); 
+
   onDestroy(() => {
-    marina.off('NETWORK');
+    unsubscribe();
   });
 </script>
 
@@ -43,10 +62,9 @@
     </div>
   </div>
 
-  {#if marina}
     <div class="hero-body">
       <div class="container is-max-desktop has-text-centered">
-        {#if network === 'testnet'}
+        {#if buttonMessage === ButtonMessage.REQUEST}
           <Field labelFor="asset" label="Asset">
             <div class="select is-primary">
               <select id="asset" bind:value={asset}>
@@ -73,7 +91,7 @@
             disabled={address === ''}
             class="button is-primary"
           >
-            Request
+            {buttonMessage}
           </button>
 
           {#if faucetPromise}
@@ -99,12 +117,12 @@
           {/if}
         {:else}
           <p class="has-text-white">
-            Wrong network, switch to the Testnet network.
+            {buttonMessage}
           </p>
         {/if}
       </div>
     </div>
-  {/if}
+
 
   <div class="hero-foot">
     <div class="container is-max-desktop">
