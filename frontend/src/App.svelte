@@ -1,5 +1,5 @@
 <script lang="typescript">
-  import { onDestroy, onMount } from 'svelte';
+  import { onDestroy } from 'svelte';
   import Connect, { marinaStore, MarinaStore } from 'svelte-marina-button';
   import type { MarinaProvider } from 'marina-provider';
   import Field from './components/Field.svelte';

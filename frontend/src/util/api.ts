@@ -10,7 +10,7 @@ export type FaucetResponse = { txid: string };
 export async function requestAsset(
   req: FaucetRequest
 ): Promise<FaucetResponse> {
-  const res = await fetch('https://b9vpauuk04.execute-api.eu-west-1.amazonaws.com/prod/liquid-faucet-testnet-resource', {
+  const res = await fetch('https://faucet-liquid.herokuapp.com/api/send', {
     method: 'POST',
     headers: {
       Accept: 'application/json',
