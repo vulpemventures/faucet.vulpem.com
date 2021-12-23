@@ -1,22 +1,156 @@
-<script>
-  import Connect from 'svelte-marina-button';
+<script lang="typescript">
+  import { onDestroy, onMount } from 'svelte';
+  import Connect, { marinaStore, MarinaStore } from 'svelte-marina-button';
+  import type { MarinaProvider } from 'marina-provider';
+  import Field from './components/Field.svelte';
+  import assets from './util/assets';
+  import { requestAsset } from './util/api';
+  import type { FaucetResponse } from './util/api';
+  import loader from './util/loader';
+
+  enum ButtonMessage {
+    INSTALL = "Marina is not installed",
+    ENABLE = "Connect with Marina",
+    WRONG_NETWORK = "Wrong network, switch to the Testnet",
+    REQUEST = "Request",
+  }
+
+ 
+  let address: string;
+  let asset: string;
+
+  $: installed = false;
+  $: enabled = false;
+  $: network = undefined;
+
+  let addressFetcherLoading = false;
+  let faucetLoading = false;
+  let faucetPromise: Promise<FaucetResponse>;
+
+
+  function isTestnet() {
+    return network === 'testnet'
+  }
+
+  function canRequestAddress() {
+    return installed && enabled && isTestnet()
+  } 
+
+  function handleClick() {
+    faucetPromise = loader(requestAsset({ to: address, asset }), (loading) => {
+      faucetLoading = loading;
+    });
+  }
+
+  const unsubscribe = marinaStore.subscribe(async (s: MarinaStore) => {
+    installed = s.installed;
+    enabled = s.enabled;
+    network = s.network;
+
+    if (addressFetcherLoading || (address && address.length > 0)) return;
+
+    if (canRequestAddress()) {
+      console.log('getting address');
+      addressFetcherLoading = true;
+      const marina: MarinaProvider = window.marina;
+      address = (await marina.getNextAddress()).confidentialAddress;
+      addressFetcherLoading = false;
+    }
+  });
+
+  $: buttonMessage = 
+    !installed ? 
+    ButtonMessage.INSTALL : 
+    (!enabled ? 
+      ButtonMessage.ENABLE : 
+      ( !isTestnet() ? 
+        ButtonMessage.WRONG_NETWORK : 
+        ButtonMessage.REQUEST
+      )
+    ); 
+
+  onDestroy(() => {
+    unsubscribe();
+  });
 </script>
 
 <section class="hero has-background-black-bis is-fullheight">
-  <!-- Hero head: will stick at the top -->
   <div class="hero-head">
     <div class="container is-max-desktop has-text-right mt-3 mr-3">
       <Connect />
     </div>
   </div>
 
-  <div class="hero-body">
-    <div class="container is-max-desktop">
-      <div class="columns">
-        <div class="column is-half is-offset-one-quarter" />
+    <div class="hero-body">
+      <div class="container is-max-desktop has-text-centered">
+        <div class="mb-6">
+          <h1 class="title has-text-white">🚰 Faucet</h1>
+          <p class="subtilte has-text-white">Liquid Network Testnet</p>  
+        </div>
+
+        {#if buttonMessage === ButtonMessage.REQUEST}
+          <div class="field is-grouped is-grouped-centered">
+            <Field labelFor="asset" label="Asset">
+              <div class="select is-primary">
+                <select id="asset" bind:value={asset}>
+                  {#each assets as { name, id }}
+                    <option value={id}>{name}</option>
+                  {/each}
+                </select>
+              </div>
+            </Field>  
+
+            <Field labelFor="address" label="Marina address">
+              <input
+                disabled
+                id="address"
+                type="text"
+                bind:value={address}
+                placeholder="Liquid testnet address"
+                class="input is-primary"
+              />
+            </Field>
+          </div>
+          
+          <button
+            on:click={handleClick}
+            class:is-loading={faucetLoading}
+            disabled={address === ''}
+            class="button is-primary"
+          >
+            {buttonMessage}
+          </button>
+
+          {#if faucetPromise}
+            {#await faucetPromise then { txid }}
+              <div class="mt-2">
+                <p class="has-text-white">
+                  Transaction ID:
+                  <a
+                    href="https://blockstream.info/liquidtestnet/tx/{txid}"
+                    target="_blank"
+                    rel="noreferrer"
+                    class="is-family-code"
+                  >
+                    {txid}
+                  </a>
+                </p>
+              </div>
+            {:catch error}
+              <p class="has-text-danger mt-2">
+                {error?.message ?? 'Unknown Error'}
+              </p>
+            {/await}
+          {/if}
+        {:else}
+          <p class="has-text-white">
+            {buttonMessage}
+          </p>
+        {/if}
+        
       </div>
     </div>
-  </div>
+
 
   <div class="hero-foot">
     <div class="container is-max-desktop">
