@@ -9,6 +9,10 @@
 docker build -t <aws_account_id>.dkr.ecr.<aws_region>.amazonaws.com/lambda-faucet:latest .
 ```
 
+### Login to ECR 
+```bash
+aws ecr get-login-password --region <aws_region> | docker login --username AWS --password-stdin <aws_account_id>.dkr.ecr.<aws_region>.amazonaws.com
+```
 
 ### Push to ECR
 ```bash
