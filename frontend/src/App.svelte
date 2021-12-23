@@ -1,7 +1,7 @@
 <script lang="typescript">
   import { onDestroy, onMount } from 'svelte';
   import Connect, { marinaStore, MarinaStore } from 'svelte-marina-button';
-  import { MarinaProvider } from 'marina-provider';
+  import type { MarinaProvider } from 'marina-provider';
   import Field from './components/Field.svelte';
   import assets from './util/assets';
   import { requestAsset } from './util/api';
@@ -23,8 +23,18 @@
   $: enabled = false;
   $: network = undefined;
 
+  let addressFetcherLoading = false;
   let faucetLoading = false;
   let faucetPromise: Promise<FaucetResponse>;
+
+
+  function isTestnet() {
+    return network === 'testnet'
+  }
+
+  function canRequestAddress() {
+    return installed && enabled && isTestnet()
+  } 
 
   function handleClick() {
     faucetPromise = loader(requestAsset({ to: address, asset }), (loading) => {
@@ -32,11 +42,20 @@
     });
   }
 
-  const unsubscribe = marinaStore.subscribe((s: MarinaStore) => {
+  const unsubscribe = marinaStore.subscribe(async (s: MarinaStore) => {
     installed = s.installed;
     enabled = s.enabled;
     network = s.network;
-    console.log(s);
+
+    if (addressFetcherLoading || (address && address.length > 0)) return;
+
+    if (canRequestAddress()) {
+      console.log('getting address');
+      addressFetcherLoading = true;
+      const marina: MarinaProvider = window.marina;
+      address = (await marina.getNextAddress()).confidentialAddress;
+      addressFetcherLoading = false;
+    }
   });
 
   $: buttonMessage = 
@@ -44,7 +63,7 @@
     ButtonMessage.INSTALL : 
     (!enabled ? 
       ButtonMessage.ENABLE : 
-      (network !== 'testnet' ? 
+      ( !isTestnet() ? 
         ButtonMessage.WRONG_NETWORK : 
         ButtonMessage.REQUEST
       )
@@ -64,27 +83,35 @@
 
     <div class="hero-body">
       <div class="container is-max-desktop has-text-centered">
+        <div class="mb-6">
+          <h1 class="title has-text-white">🚰 Faucet</h1>
+          <p class="subtilte has-text-white">Liquid Network Testnet</p>  
+        </div>
+
         {#if buttonMessage === ButtonMessage.REQUEST}
-          <Field labelFor="asset" label="Asset">
-            <div class="select is-primary">
-              <select id="asset" bind:value={asset}>
-                {#each assets as { name, id }}
-                  <option value={id}>{name}</option>
-                {/each}
-              </select>
-            </div>
-          </Field>
+          <div class="field is-grouped is-grouped-centered">
+            <Field labelFor="asset" label="Asset">
+              <div class="select is-primary">
+                <select id="asset" bind:value={asset}>
+                  {#each assets as { name, id }}
+                    <option value={id}>{name}</option>
+                  {/each}
+                </select>
+              </div>
+            </Field>  
 
-          <Field labelFor="address" label="Address">
-            <input
-              id="address"
-              type="text"
-              bind:value={address}
-              placeholder="Liquid testnet address"
-              class="input is-primary"
-            />
-          </Field>
-
+            <Field labelFor="address" label="Marina address">
+              <input
+                disabled
+                id="address"
+                type="text"
+                bind:value={address}
+                placeholder="Liquid testnet address"
+                class="input is-primary"
+              />
+            </Field>
+          </div>
+          
           <button
             on:click={handleClick}
             class:is-loading={faucetLoading}
@@ -120,6 +147,7 @@
             {buttonMessage}
           </p>
         {/if}
+        
       </div>
     </div>
 
