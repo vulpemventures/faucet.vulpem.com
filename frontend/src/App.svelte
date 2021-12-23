@@ -121,6 +121,17 @@
             {buttonMessage}
           </button>
 
+          {#if (address && address.length > 0)}
+          <div class="mt-3">
+            <a href={"http://twitter.com/intent/tweet?text=Requesting%20%40Liquid_BTC%20testnet%20funds%20to%20my%20%40MarinaWallet%20address%20%0A"+address} target="_blank" rel="noreferrer">
+              <p class="has-text-white is-link">
+                Do you need huge amount? 🐥 Tweet at @vulpemventures
+              </p>
+            </a>
+          </div>
+         
+          {/if}
+
           {#if faucetPromise}
             {#await faucetPromise then { txid }}
               <div class="mt-2">
@@ -155,8 +166,8 @@
   <div class="hero-foot">
     <div class="container is-max-desktop">
       <div class="columns is-mobile is-half is-offset-one-third">
-        <div class="column has-text-centered has-text-white">
-          Made with ❤️ at Vulpem Ventures
+        <div class="column has-text-centered">
+          <p class="has-text-white">Made with ❤️ at Vulpem Ventures</p>
         </div>
       </div>
     </div>
