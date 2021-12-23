@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset="utf-8">
+      <title>Faucet Liquid Network</title>
+      <script>
+        window.onload = async function() {
+          const response = await window.fetch('/api/address');
+          const json = await response.json();
+ 
+          const div = window.document.getElementById("address");
+          const p = window.document.createElement("p");
+          p.textContent = json.address;
+          div.appendChild(p);
+        }
+      </script>
+   </head>
+   <body>
+     <div id="address">
+      <h1>🚰 Faucet</h1>
+    </div>
+   </body>
+</html>

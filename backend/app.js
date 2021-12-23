@@ -1,22 +1,21 @@
 const liquid = require('liquidjs-lib');
-const { send } = require("./transaction");
+const AMOUNT_PER_ASSET = require('./assets');
+const {
+  walletFromKeys,
+  createTx,
+  blindTx,
+  signTx,
+  broadcastTx,
+} = require('./wallet');
 
 
-const AMOUNT_PER_ASSET = {
-  '144c654344aa716d6f3abcc1ca90e5641e4e2a7f633bc09fe3baf64585819a49': 10000, //10k 
-  'f3d1ec678811398cd2ae277cbe3849c6f6dbd72c74bc542f7c4b11ff0e820958': 500000000, // 5 USDt
-  'ac3e0ff248c5051ffd61e00155b7122e5ebc04fd397a0ecbdd4f4e4a56232926': 500000000 // 5 LCAD
-};
 
-module.exports.handler = async (event, context) => {
-  if (!event.hasOwnProperty('body')) 
-    throw new Error('missing body');
+async function getAddressInfo(signWif, blindWif) {
+  const { addressInfo } = await walletFromKeys(signWif, blindWif);
+  return addressInfo;
+}
 
-  const body = JSON.parse(event.body);
-  if (!body.hasOwnProperty("to") || !body.hasOwnProperty("asset"))
-    throw new Error('bad params');
-
-  const { asset, to } = body;
+async function send(to, asset, signWif, blindWif, explorerUrl) {
 
   const ASSETS = Object.keys(AMOUNT_PER_ASSET);
   if (!ASSETS.includes(asset))
@@ -25,23 +24,44 @@ module.exports.handler = async (event, context) => {
 
   try {
     liquid.address.toOutputScript(to)
-  } catch(e) {
+  } catch (e) {
     throw new Error('invalid address');
   }
 
+
   try {
-    console.info(`Sending ${asset} to ${to}`);
-    
-    const txid = await send(to, AMOUNT_PER_ASSET[asset], asset);
+    const { addressInfo, privateKey } = await walletFromKeys(signWif, blindWif);
 
-    const response = {
-      "statusCode": 200,
-      "body": JSON.stringify({ txid }),
-      "isBase64Encoded": false
-  };
+    console.debug(`Creating tx of ${asset} for ${to}`);
+    const unsignedTx = await createTx(
+      addressInfo,
+      {
+        to,
+        asset,
+        amount: AMOUNT_PER_ASSET[asset],
+      },
+      explorerUrl
+    );
 
-    return response;
-  } catch(e) {
-    throw new Error('Internal error. Please try again')
+    console.debug(`Blinding tx...`);
+    const blindedTx = await blindTx(unsignedTx, privateKey);
+
+    console.debug(`Signing tx...`);
+    const signedTxHex = await signTx(blindedTx, privateKey);
+
+    console.debug(`Broadcasting tx...`);
+    const txid = await broadcastTx(signedTxHex, explorerUrl);
+
+    console.debug(`Success! ${txid}`);
+    return txid;
+  } catch (e) {
+    throw e;
   }
-};
+}
+
+
+
+module.exports = {
+  getAddressInfo,
+  send,
+}

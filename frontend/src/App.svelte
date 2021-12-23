@@ -50,7 +50,6 @@
     if (addressFetcherLoading || (address && address.length > 0)) return;
 
     if (canRequestAddress()) {
-      console.log('getting address');
       addressFetcherLoading = true;
       const marina: MarinaProvider = window.marina;
       address = (await marina.getNextAddress()).confidentialAddress;
