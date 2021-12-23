@@ -10,17 +10,6 @@ const mode = process.env.NODE_ENV || 'development';
 const dev = mode === 'development';
 const prod = mode === 'production';
 
-const proxy = {
-	changeOrigin: true,
-	secure: false,
-	'/api': {
-		target: 'https://b9vpauuk04.execute-api.eu-west-1.amazonaws.com/prod/liquid-faucet-testnet-resource',
-		pathRewrite: { '^/api': '' },
-		secure: false,
-		changeOrigin: true,
-	},
-}
-
 module.exports = {
 	entry: {
 		bundle: [
@@ -98,7 +87,6 @@ module.exports = {
 	],
 	devtool: prod ? false : 'source-map',
 	devServer: {
-		hot: true,
-		proxy: dev ? proxy : undefined,
+		hot: true
 	}
 };

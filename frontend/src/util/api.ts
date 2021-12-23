@@ -5,10 +5,12 @@ export type FaucetRequest = {
 
 export type FaucetResponse = { txid: string };
 
+
+
 export async function requestAsset(
   req: FaucetRequest
 ): Promise<FaucetResponse> {
-  const res = await fetch('/api', {
+  const res = await fetch('https://b9vpauuk04.execute-api.eu-west-1.amazonaws.com/prod/liquid-faucet-testnet-resource', {
     method: 'POST',
     headers: {
       Accept: 'application/json',
