@@ -10,7 +10,7 @@
 
   enum ButtonMessage {
     INSTALL = "Marina is not installed",
-    ENABLE = "Connect with Marina",
+    ENABLE = "Connect with Marina wallet",
     WRONG_NETWORK = "Wrong network, switch to the Testnet",
     REQUEST = "Request",
   }
@@ -85,7 +85,7 @@
       <div class="container is-max-desktop has-text-centered">
         <div class="mb-6">
           <h1 class="title has-text-white">🚰 Faucet</h1>
-          <p class="subtilte has-text-white">Liquid Network Testnet</p>  
+          <p class="subtitle is-6">Liquid Network Testnet</p>
         </div>
 
         {#if buttonMessage === ButtonMessage.REQUEST}
@@ -155,7 +155,7 @@
   <div class="hero-foot">
     <div class="container is-max-desktop">
       <div class="columns is-mobile is-half is-offset-one-third">
-        <div class="column has-text-centered">
+        <div class="column has-text-centered has-text-white">
           Made with ❤️ at Vulpem Ventures
         </div>
       </div>
