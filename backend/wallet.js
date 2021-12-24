@@ -44,7 +44,7 @@ async function createTx(addressInfo, { to, amount, asset }, explorerUrl) {
 }
 
 // blind 
-async function blindTx(unsignedTxBase64, privateKey) {
+async function blindTx(unsignedTxBase64, to, privateKey) {
   const addressInfo = await privateKey.getNextAddress();
 
   const outputsToBlind = new Array();

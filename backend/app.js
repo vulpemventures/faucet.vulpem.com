@@ -21,9 +21,8 @@ async function send(to, asset, signWif, blindWif, explorerUrl) {
   if (!ASSETS.includes(asset))
     throw new Error('asset not supported, must be one of ' + ASSETS);
 
-
   try {
-    liquid.address.toOutputScript(to)
+    liquid.address.toOutputScript(to, liquid.networks.testnet);
   } catch (e) {
     throw new Error('invalid address');
   }
@@ -44,7 +43,7 @@ async function send(to, asset, signWif, blindWif, explorerUrl) {
     );
 
     console.debug(`Blinding tx...`);
-    const blindedTx = await blindTx(unsignedTx, privateKey);
+    const blindedTx = await blindTx(unsignedTx, to, privateKey);
 
     console.debug(`Signing tx...`);
     const signedTxHex = await signTx(blindedTx, privateKey);

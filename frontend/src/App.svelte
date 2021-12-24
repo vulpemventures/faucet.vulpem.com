@@ -37,6 +37,8 @@
   } 
 
   function handleClick() {
+    if (!address || address.length === 0) return;
+    console.log(address, asset)
     faucetPromise = loader(requestAsset({ to: address, asset }), (loading) => {
       faucetLoading = loading;
     });
@@ -114,17 +116,17 @@
           <button
             on:click={handleClick}
             class:is-loading={faucetLoading}
-            disabled={address === ''}
+            disabled={!address || address === ''}
             class="button is-primary"
           >
             {buttonMessage}
           </button>
 
           {#if (address && address.length > 0)}
-          <div class="mt-3">
+          <div class="mt-4">
             <a href={"http://twitter.com/intent/tweet?text=Requesting%20%40Liquid_BTC%20testnet%20funds%20to%20my%20%40MarinaWallet%20address%20%0A"+address} target="_blank" rel="noreferrer">
               <p class="has-text-white is-link">
-                Do you need huge amount? 🐥 Tweet at @vulpemventures
+                Do you need more? 🐥 Tweet at your request
               </p>
             </a>
           </div>

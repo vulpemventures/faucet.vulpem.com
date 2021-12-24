@@ -5,12 +5,14 @@ export type FaucetRequest = {
 
 export type FaucetResponse = { txid: string };
 
+const BACKEND_URL = "https://faucet-liquid.herokuapp.com"
+//const BACKEND_URL = "http://localhost:8000"
 
 
 export async function requestAsset(
   req: FaucetRequest
 ): Promise<FaucetResponse> {
-  const res = await fetch('https://faucet-liquid.herokuapp.com/api/send', {
+  const res = await fetch(`${BACKEND_URL}/api/send`, {
     method: 'POST',
     headers: {
       Accept: 'application/json',
