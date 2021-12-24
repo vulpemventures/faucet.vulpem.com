@@ -95,10 +95,35 @@ async function signTx(blindedTxBase64, privateKey) {
 
 
 async function broadcastTx(hex, explorerUrl) {
-  //Now we can broadcast with the Esplora API
-  const txid = (await axios.post(`${explorerUrl}/tx`, hex)).data;
-  return txid;
+  try {
+    const result = await axios.post(`${explorerUrl}/tx`, hex, {
+      headers: { 'Content-Type': 'text/plain' },
+    });
+
+    return result.data;
+  } catch (error) {
+    // Error 😨
+    if (error.response) {
+      /*
+       * The request was made and the server responded with a
+       * status code that falls out of the range of 2xx
+       */
+      throw new Error(error.response.data);
+    } else if (error.request) {
+      /*
+       * The request was made but no response was received, `error.request`
+       * is an instance of XMLHttpRequest in the browser and an instance
+       * of http.ClientRequest in Node.js
+       */
+      throw new Error(error.request);
+    } else {
+      // Something happened in setting up the request and triggered an Error
+      throw new Error(error.message);
+    }
+  }
 }
+
+
 
 async function walletFromKeys(signWif, blindWif) {
   const privateKey = new PrivateKey({

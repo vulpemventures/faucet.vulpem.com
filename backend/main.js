@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const bodyParser = require('body-parser');
+const rateLimit = require("express-rate-limit");
 
 const application = require('./app');
 
@@ -16,12 +17,20 @@ const app = express();
 // parse application/json
 app.use(bodyParser.json());
 app.use(cors());
+// Enable if you're behind a reverse proxy such as Heroku
+app.set('trust proxy', 1);
+
+const limiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 60 minutes
+  max: 3, // limit each IP to 3 requests per windowMs,
+  message: "Too many requestst, please try again after an hour"
+});
 
 app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.get('/api/address', async function (req, res) {
+app.get('/api/address', limiter,  async function (req, res) {
   try {
     const addressInfo = await application.getAddressInfo(SIGN_WIF, BLIND_WIF);
     return res.status(200).json({ address: addressInfo.confidentialAddress });

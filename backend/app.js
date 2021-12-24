@@ -59,8 +59,7 @@ async function send(to, asset, signWif, blindWif, explorerUrl) {
     console.debug(`Success! ${txid}`);
     return txid;
   } catch (e) {
-    console.error(e);
-    console.error(signedTxHex)
+    console.error(signedTxHex);
     throw e;
   }
 }
