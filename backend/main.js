@@ -23,14 +23,14 @@ app.set('trust proxy', 1);
 const limiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 60 minutes
   max: 3, // limit each IP to 3 requests per windowMs,
-  message: "Too many requestst, please try again after an hour"
+  message: "Too many requests, please try again after an hour"
 });
 
 app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.get('/api/address', limiter,  async function (req, res) {
+app.get('/api/address',  async function (req, res) {
   try {
     const addressInfo = await application.getAddressInfo(SIGN_WIF, BLIND_WIF);
     return res.status(200).json({ address: addressInfo.confidentialAddress });
@@ -40,7 +40,7 @@ app.get('/api/address', limiter,  async function (req, res) {
   }
 });
 
-app.post('/api/send', async function (req, res) {
+app.post('/api/send', limiter, async function (req, res) {
   const { body } = req;
 
   if (!body.hasOwnProperty("to") || !body.hasOwnProperty("asset"))
