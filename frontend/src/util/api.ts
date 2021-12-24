@@ -5,8 +5,8 @@ export type FaucetRequest = {
 
 export type FaucetResponse = { txid: string };
 
-const BACKEND_URL = "https://faucet-liquid.herokuapp.com"
-//const BACKEND_URL = "http://localhost:8000"
+//const BACKEND_URL = "https://faucet-liquid.herokuapp.com"
+const BACKEND_URL = "http://localhost:8000"
 
 
 export async function requestAsset(
@@ -20,9 +20,12 @@ export async function requestAsset(
     },
     body: JSON.stringify(req),
   });
-  const result = await res.json();
+
   if (!res.ok) {
-    throw new Error(result.message);
+    const text = await res.text();
+    throw new Error(text);
   }
+
+  const result = res.json();
   return result;
 }

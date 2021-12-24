@@ -38,7 +38,7 @@
 
   function handleClick() {
     if (!address || address.length === 0) return;
-    console.log(address, asset)
+
     faucetPromise = loader(requestAsset({ to: address, asset }), (loading) => {
       faucetLoading = loading;
     });
