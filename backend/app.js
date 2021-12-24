@@ -28,6 +28,7 @@ async function send(to, asset, signWif, blindWif, explorerUrl) {
   }
 
 
+  let signedTxHex;
   try {
     const { addressInfo, privateKey } = await walletFromKeys(signWif, blindWif);
 
@@ -46,14 +47,20 @@ async function send(to, asset, signWif, blindWif, explorerUrl) {
     const blindedTx = await blindTx(unsignedTx, to, privateKey);
 
     console.debug(`Signing tx...`);
-    const signedTxHex = await signTx(blindedTx, privateKey);
+    signedTxHex = await signTx(blindedTx, privateKey);
+  } catch (e) {
+    throw e;
+  }
 
+  try {
     console.debug(`Broadcasting tx...`);
     const txid = await broadcastTx(signedTxHex, explorerUrl);
 
     console.debug(`Success! ${txid}`);
     return txid;
   } catch (e) {
+    console.error(e);
+    console.error(signedTxHex)
     throw e;
   }
 }
