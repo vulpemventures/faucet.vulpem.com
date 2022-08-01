@@ -8,8 +8,9 @@ ENV NODE_ENV production
 WORKDIR /app
 # Cache and Install dependencies
 COPY package.json .
+COPY yarn.lock .
 # Install
-RUN yarn install --only=production
+RUN yarn install --only=production --frozen-lockfile
 
 # Add files
 COPY *.js /app/
