@@ -42,9 +42,7 @@
   },
   "dependencies": {
     "bulma": "^0.9.3",
-    "html5-qrcode": "^2.2.1",
-    "marina-provider": "^1.4.3",
-    "svelte-marina-button": "^0.1.2"
+    "html5-qrcode": "^2.2.1"
   },
   "prettier": {
     "tabWidth": 2,
