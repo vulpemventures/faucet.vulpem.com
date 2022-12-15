@@ -126,7 +126,7 @@
           <div class="mt-4">
             <a href={"http://twitter.com/intent/tweet?text=Requesting%20%40Liquid_BTC%20testnet%20funds%20to%20my%20%40MarinaWallet%20address%20%0A"+address} target="_blank" rel="noreferrer">
               <p class="has-text-white is-link">
-                Do you need more? 🐥 Tweet at your request
+                Do you need more? 🐥 Tweet your request
               </p>
             </a>
           </div>

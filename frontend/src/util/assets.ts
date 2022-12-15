@@ -11,4 +11,8 @@ export default [
     name: 'LCAD',
     id: 'ac3e0ff248c5051ffd61e00155b7122e5ebc04fd397a0ecbdd4f4e4a56232926',
   },
+  {
+    name: 'vTSLA',
+    id: 'bb4a02e3d4e777a6081f99e122bbfca6bd3f2cff518fc1b1a643d1adb5a3076b',
+  },
 ];
