@@ -1,11 +1,11 @@
 <script lang="typescript">
-  import { onDestroy } from 'svelte';
-  import Connect, { marinaStore, MarinaStore } from 'svelte-marina-button';
-  import type { MarinaProvider } from 'marina-provider';
+  import {onDestroy} from 'svelte';
+  import Connect, {marinaStore, MarinaStore} from 'svelte-marina-button';
+  import type {MarinaProvider} from 'marina-provider';
   import Field from './components/Field.svelte';
   import assets from './util/assets';
-  import { requestAsset } from './util/api';
-  import type { FaucetResponse } from './util/api';
+  import type {FaucetResponse} from './util/api';
+  import {requestAsset} from './util/api';
   import loader from './util/loader';
 
   enum ButtonMessage {
@@ -15,7 +15,7 @@
     REQUEST = "Request",
   }
 
- 
+
   let address: string;
   let asset: string;
 
@@ -29,17 +29,17 @@
 
 
   function isTestnet() {
-    return network === 'testnet'
+    return network === 'testnet' || network.data === 'testnet';
   }
 
   function canRequestAddress() {
     return installed && enabled && isTestnet()
-  } 
+  }
 
   function handleClick() {
     if (!address || address.length === 0) return;
 
-    faucetPromise = loader(requestAsset({ to: address, asset }), (loading) => {
+    faucetPromise = loader(requestAsset({to: address, asset}), (loading) => {
       faucetLoading = loading;
     });
   }
@@ -59,118 +59,108 @@
     }
   });
 
-  $: buttonMessage = 
-    !installed ? 
-    ButtonMessage.INSTALL : 
-    (!enabled ? 
-      ButtonMessage.ENABLE : 
-      ( !isTestnet() ? 
-        ButtonMessage.WRONG_NETWORK : 
-        ButtonMessage.REQUEST
-      )
-    ); 
+  $: buttonMessage =
+    !installed ?
+      ButtonMessage.INSTALL :
+      (!enabled ?
+          ButtonMessage.ENABLE :
+          (!isTestnet() ?
+              ButtonMessage.WRONG_NETWORK :
+              ButtonMessage.REQUEST
+          )
+      );
 
   onDestroy(() => {
     unsubscribe();
   });
 </script>
 
-<section class="hero has-background-black-bis is-fullheight">
+<section class="hero has-background-black is-fullheight">
   <div class="hero-head">
-    <div class="container is-max-desktop has-text-right mt-3 mr-3">
-      <Connect />
+    <div class="container is-max-desktop has-text-right mt-5 mr-5">
+      <Connect cssClass="button"/>
     </div>
   </div>
 
-    <div class="hero-body">
-      <div class="container is-max-desktop has-text-centered">
-        <div class="mb-6">
-          <h1 class="title has-text-white">🚰 Faucet</h1>
-          <p class="subtitle is-6">Liquid Network Testnet</p>
-        </div>
+  <div class="hero-body">
+    <div class="container is-max-desktop has-text-centered">
+      <div class="mb-6">
+        <h1 class="title has-text-white is-size-2">🚰 Faucet</h1>
+        <p class="subtitle is-6 is-size-5">Liquid Network Testnet</p>
+      </div>
 
-        {#if buttonMessage === ButtonMessage.REQUEST}
-          <div class="field is-grouped is-grouped-centered">
-            <Field labelFor="asset" label="Asset">
+      {#if buttonMessage === ButtonMessage.REQUEST}
+        <div class=" column is-8  is-offset-2">
+          <div class="field is-flex is-grouped is-grouped-centered">
+            <Field labelFor="asset" classes="column is-4-mobile is-3-tablet is-2-desktop">
               <div class="select is-primary">
                 <select id="asset" bind:value={asset}>
-                  {#each assets as { name, id }}
+                  {#each assets as {name, id}}
                     <option value={id}>{name}</option>
                   {/each}
                 </select>
               </div>
-            </Field>  
+            </Field>
 
-            <Field labelFor="address" label="Marina address">
+            <Field labelFor="address" classes="column is-8-mobile is-9-tablet is-10-desktop">
               <input
-                disabled
-                id="address"
-                type="text"
-                bind:value={address}
-                placeholder="Liquid testnet address"
-                class="input is-primary"
+                  disabled
+                  id="address"
+                  type="text"
+                  bind:value={address}
+                  placeholder="Liquid testnet address"
+                  class="input is-primary"
               />
             </Field>
           </div>
-          
           <button
-            on:click={handleClick}
-            class:is-loading={faucetLoading}
-            disabled={!address || address === ''}
-            class="button is-primary"
+              on:click={handleClick}
+              class:is-loading={faucetLoading}
+              disabled={!address || address === ''}
+              class="button is-primary button__request"
           >
             {buttonMessage}
           </button>
+        </div>
 
-          {#if (address && address.length > 0)}
+        {#if (address && address.length > 0)}
           <div class="mt-4">
-            <a href={"http://twitter.com/intent/tweet?text=Requesting%20%40Liquid_BTC%20testnet%20funds%20to%20my%20%40MarinaWallet%20address%20%0A"+address} target="_blank" rel="noreferrer">
+            <a href={"http://twitter.com/intent/tweet?text=Requesting%20%40Liquid_BTC%20testnet%20funds%20to%20my%20%40MarinaWallet%20address%20%0A"+address}
+               target="_blank" rel="noreferrer">
               <p class="has-text-white is-link">
                 Do you need more? 🐥 Tweet at your request
               </p>
             </a>
           </div>
-         
-          {/if}
 
-          {#if faucetPromise}
-            {#await faucetPromise then { txid }}
-              <div class="mt-2">
-                <p class="has-text-white">
-                  Transaction ID:
-                  <a
+        {/if}
+
+        {#if faucetPromise}
+          {#await faucetPromise then {txid}}
+            <div class="mt-6">
+              <p class="has-text-white">
+                Transaction ID:
+                <a
                     href="https://blockstream.info/liquidtestnet/tx/{txid}"
                     target="_blank"
                     rel="noreferrer"
                     class="is-family-code"
-                  >
-                    {txid}
-                  </a>
-                </p>
-              </div>
-            {:catch error}
-              <p class="has-text-danger mt-2">
-                {error?.message ?? 'Unknown Error'}
+                >
+                  {txid}
+                </a>
               </p>
-            {/await}
-          {/if}
-        {:else}
-          <p class="has-text-white">
-            {buttonMessage}
-          </p>
+            </div>
+          {:catch error}
+            <p class="has-text-danger mt-6">
+              {error?.message ?? 'Unknown Error'}
+            </p>
+          {/await}
         {/if}
-        
-      </div>
-    </div>
-
-
-  <div class="hero-foot">
-    <div class="container is-max-desktop">
-      <div class="columns is-mobile is-half is-offset-one-third">
-        <div class="column has-text-centered">
-          <p class="has-text-white">Made with ❤️ at Vulpem Ventures</p>
-        </div>
-      </div>
+      {:else}
+        <p class="has-text-white is-uppercase is-size-5">
+          {buttonMessage}
+        </p>
+      {/if}
     </div>
   </div>
 </section>

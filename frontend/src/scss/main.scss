@@ -3,15 +3,100 @@
 @import "node_modules/bulma/sass/utilities/initial-variables";
 
 // Import a Google Font
-@import url("https://fonts.googleapis.com/css?family=Poppins:400,700");
-
+@import url('https://fonts.googleapis.com/css2?family=Anonymous+Pro:wght@400;700&display=swap');
 
 // Update Bulma's global variables
-$family-sans-serif: "Poppins", sans-serif;
-$primary: #46b4a5;
+$family-sans-serif: "Anonymous Pro", sans-serif;
+// Colors
+$black-bis: #141414;
+$grey: #222222;
+$grey-tinted: #666666;
+$primary: #17af85;
+$primary-shaded: #16a47c;
 
 // Update some of Bulma's component variables
 $control-border-width: 2px;
 
 // Import the rest of Bulma
 @import "node_modules/bulma/bulma";
+
+.button {
+  background-color: transparent;
+  border: 1px solid $primary;
+  border-radius: 0;
+  color: white;
+  text-transform: uppercase;
+  &.is-primary {
+    color: black;
+    &:hover, &:focus {
+      box-shadow: none !important;
+      color: black;
+    }
+    &.is-loading::after {
+      border-color: transparent transparent $black-bis $black-bis !important;
+    }
+  }
+  &:hover {
+    background-color:$primary;
+    border: 1px solid $primary;
+    color: black;
+  }
+  &:focus:not(.is-primary) {
+    background-color: transparent;
+    border: 1px solid $primary;
+    color: white;
+  }
+}
+
+.subtitle {
+  color: $grey-tinted;
+}
+
+.button__request {
+  width: 100%;
+}
+
+.input, input {
+  border: 1px solid $primary;
+  border-radius: 0;
+  background-color: $grey !important;
+  color: white !important;
+  height: 64px !important;
+  padding: 0 16px !important;
+}
+
+.select {
+  height: 64px !important;
+  width: 100%;
+  &::after {
+    border-color: white !important;
+  }
+  select {
+    align-content: center;
+    background-color: $black-bis;
+    border: 1px solid $primary;
+    border-right: none;
+    border-radius: 0;
+    color: white;
+    height: 100%;
+    width: 100%;
+    &:focus {
+      box-shadow: none !important;
+    }
+  }
+}
+
+.field {
+  padding: 0;
+}
+
+.hero-body .container {
+  margin-bottom: 10rem;
+}
+
+a {
+  color: $primary;
+  &:hover {
+    color: $primary-shaded;
+  }
+}
