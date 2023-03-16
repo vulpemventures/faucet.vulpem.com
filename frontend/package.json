@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "devDependencies": {
     "@tsconfig/svelte": "^1.0.10",
-    "@types/node": "^14.11.1",
+    "@types/node": "^16.11.1",
     "@typescript-eslint/eslint-plugin": "^5.8.0",
     "@typescript-eslint/parser": "^5.8.0",
     "buffer": "^6.0.3",
@@ -41,9 +41,8 @@
     "format": "npx prettier --write src/**/*.svelte"
   },
   "dependencies": {
-    "bulma": "^0.9.3",
-    "marina-provider": "^1.4.3",
-    "svelte-marina-button": "^0.1.2"
+    "bulma": "^0.9.4",
+    "html5-qrcode": "^2.3.7"
   },
   "prettier": {
     "tabWidth": 2,

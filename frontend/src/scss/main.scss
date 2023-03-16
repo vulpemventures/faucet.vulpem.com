@@ -16,6 +16,7 @@ $primary-shaded: #16a47c;
 
 // Update some of Bulma's component variables
 $control-border-width: 2px;
+$icon-dimensions: 2rem;
 
 // Import the rest of Bulma
 @import "node_modules/bulma/bulma";
@@ -26,21 +27,26 @@ $control-border-width: 2px;
   border-radius: 0;
   color: white;
   text-transform: uppercase;
+
   &.is-primary {
     color: black;
+
     &:hover, &:focus {
       box-shadow: none !important;
       color: black;
     }
+
     &.is-loading::after {
       border-color: transparent transparent $black-bis $black-bis !important;
     }
   }
+
   &:hover {
-    background-color:$primary;
+    background-color: $primary;
     border: 1px solid $primary;
     color: black;
   }
+
   &:focus:not(.is-primary) {
     background-color: transparent;
     border: 1px solid $primary;
@@ -68,9 +74,11 @@ $control-border-width: 2px;
 .select {
   height: 64px !important;
   width: 100%;
+
   &::after {
     border-color: white !important;
   }
+
   select {
     align-content: center;
     background-color: $black-bis;
@@ -79,7 +87,9 @@ $control-border-width: 2px;
     border-radius: 0;
     color: white;
     height: 100%;
+    padding: 0 15% !important;
     width: 100%;
+
     &:focus {
       box-shadow: none !important;
     }
@@ -96,7 +106,13 @@ $control-border-width: 2px;
 
 a {
   color: $primary;
+  word-wrap: anywhere;
+
   &:hover {
     color: $primary-shaded;
   }
+}
+
+.icon {
+  height: 100% !important;
 }
