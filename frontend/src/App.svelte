@@ -15,7 +15,7 @@
     REQUEST = "Request",
   }
 
- 
+
   let address: string;
   let asset: string;
 
@@ -29,12 +29,12 @@
 
 
   function isTestnet() {
-    return network === 'testnet'
+    return network === 'testnet' || network.data === 'testnet'
   }
 
   function canRequestAddress() {
     return installed && enabled && isTestnet()
-  } 
+  }
 
   function handleClick() {
     if (!address || address.length === 0) return;
@@ -59,16 +59,16 @@
     }
   });
 
-  $: buttonMessage = 
-    !installed ? 
-    ButtonMessage.INSTALL : 
-    (!enabled ? 
-      ButtonMessage.ENABLE : 
-      ( !isTestnet() ? 
-        ButtonMessage.WRONG_NETWORK : 
+  $: buttonMessage =
+    !installed ?
+    ButtonMessage.INSTALL :
+    (!enabled ?
+      ButtonMessage.ENABLE :
+      ( !isTestnet() ?
+        ButtonMessage.WRONG_NETWORK :
         ButtonMessage.REQUEST
       )
-    ); 
+    );
 
   onDestroy(() => {
     unsubscribe();
@@ -99,7 +99,7 @@
                   {/each}
                 </select>
               </div>
-            </Field>  
+            </Field>
 
             <Field labelFor="address" label="Marina address">
               <input
@@ -112,7 +112,7 @@
               />
             </Field>
           </div>
-          
+
           <button
             on:click={handleClick}
             class:is-loading={faucetLoading}
@@ -130,7 +130,7 @@
               </p>
             </a>
           </div>
-         
+
           {/if}
 
           {#if faucetPromise}
@@ -159,7 +159,7 @@
             {buttonMessage}
           </p>
         {/if}
-        
+
       </div>
     </div>
 
