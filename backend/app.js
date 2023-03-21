@@ -1,5 +1,5 @@
 const liquid = require('liquidjs-lib');
-const AMOUNT_PER_ASSET = require('./assets');
+const {AMOUNT_PER_ASSET, TICKER_PER_ASSET} = require('./assets');
 const {
   walletFromKeys,
   createTx,
@@ -13,6 +13,10 @@ const {
 async function getAddressInfo(signWif, blindWif) {
   const { addressInfo } = await walletFromKeys(signWif, blindWif);
   return addressInfo;
+}
+
+async function getAssets() {
+  return TICKER_PER_ASSET;
 }
 
 async function send(to, asset, signWif, blindWif, explorerUrl) {
@@ -67,6 +71,7 @@ async function send(to, asset, signWif, blindWif, explorerUrl) {
 
 
 module.exports = {
+  getAssets,
   getAddressInfo,
   send,
 }

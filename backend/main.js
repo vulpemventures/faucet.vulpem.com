@@ -23,7 +23,7 @@ app.set('trust proxy', 1);
 const limiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 60 minutes
   max: 10, // limit each IP to 3 requests per windowMs,
-  message: "Too many requests, please try again after an hour",
+  message: "Too many requests, please try again in an hour",
   skipFailedRequests: true,
 });
 
@@ -35,6 +35,16 @@ app.get('/api/address',  async function (req, res) {
   try {
     const addressInfo = await application.getAddressInfo(SIGN_WIF, BLIND_WIF);
     return res.status(200).json({ address: addressInfo.confidentialAddress });
+  } catch (e) {
+    console.error(e.message || JSON.stringify(e));
+    return res.status(500).send('Internal error');
+  }
+});
+
+app.get('/api/assets', async function (_, res) {
+  try {
+    const assets = await application.getAssets();
+    return res.status(200).json({ assets });
   } catch (e) {
     console.error(e.message || JSON.stringify(e));
     return res.status(500).send('Internal error');
